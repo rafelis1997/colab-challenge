@@ -2,6 +2,11 @@
 
 Este projeto tem como finalidade demonstrar conhecimentos práticos de Fullstack.
 
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/60658855/231894717-1b0a7b27-eb59-4bd9-99cd-b894e8c0ba36.png"/>
+</p>
+
+
 ## Esclarecimentos
 
 A API mandatória a ser utilizada no desafio é a [Random User](https://randomuser.me/), porém para o
