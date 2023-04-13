@@ -1,5 +1,4 @@
 import { GetServerSideProps } from "next";
-import Image from "next/image";
 import { CaretLeft } from '@phosphor-icons/react'
 import dayjs from 'dayjs'
 
@@ -74,15 +73,9 @@ export default function UserDetails({ user }: { user: UserDataResponse }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({query}) => {
-  const { page, uuid } = query
+  const { uuid } = query
   
-  let response;
-  
-  if (page) {
-    response = await fetch(`https://randomuser.me/api/?page=${page}&results=10&seed=colab`)
-  } else {
-    response = await fetch(`https://randomuser.me/api/?results=1000&seed=colab`)
-  }
+  const response = await fetch(`https://randomuser.me/api/?results=1000&seed=colab`)
   
   const { results }: { results: UserDataResponse[] } = await response.json()
 

@@ -32,3 +32,4 @@ export interface UserDataResponse {
     uuid: string
   }
 }
+

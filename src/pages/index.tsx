@@ -3,59 +3,68 @@ import { ListCard } from "@/components/listCard"
 import { UserDataResponse } from "@/dtos/UserDto"
 import { GetServerSideProps } from "next"
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { Pagination } from "@/components/pagination"
 
-export const getServerSideProps: GetServerSideProps = async ({query}) => {
+interface userListResponse {
+  results: UserDataResponse[]
+  pagination: {
+    currentPage: number
+    pagesArray: number[]
+    hasNextPage: boolean
+  }
+}
 
-  const response = await fetch('https://randomuser.me/api/?page=1&results=10&seed=colab')
+export const getServerSideProps: GetServerSideProps = async () => {
+
+  const response = await fetch('http://localhost:3000/api/user/')
   
-  const { results } : { results : UserDataResponse[] } = await response.json()
+  const data: userListResponse = await response.json()
+  
   return {
     props: {
-      results
+      data
     }
   }
 } 
 
-const pages = [1, 2, 3]
+// const pages = [1, 2, 3]
 
-export default function Home({ results }: { results: UserDataResponse[] }) {
-  const [userList, setUserList] = useState<UserDataResponse[]>(results)
-  const [currentPage, setCurrentPage] = useState<number | null>(1)
+export default function Home({data}: {data:userListResponse}) {
+  const [userList, setUserList] = useState<userListResponse>(data)
+  const [search, setSearch] = useState<string | null>(null)
   const [animationParent] = useAutoAnimate()
 
   async function handlePageChange(page: number) {
-    const response = await fetch(`https://randomuser.me/api/?page=${page}&results=10&seed=colab`)
+    const response = await fetch(`http://localhost:3000/api/user/?search=${search ? search : '' }&page=${page}`)
   
-    const { results }: { results: UserDataResponse[] } = await response.json()
+    const data: userListResponse = await response.json()
     
-    setUserList(results)
-    setCurrentPage(page)
+    setUserList(data)
   }
 
   async function handleSearch(e: FormEvent) {
     e.preventDefault()
     const data = new FormData(e.currentTarget as HTMLFormElement)
 
-    const search = data.get('search') as string
+    const searchData = data.get('search') as string
 
-    if (search.length > 0) {
-      const response = await fetch(`https://randomuser.me/api/?results=1000&seed=colab`)
+    if (searchData.length > 0) {
+      const response = await fetch(`http://localhost:3000/api/user/?search=${search}`)
     
-      const { results }: { results: UserDataResponse[] } = await response.json()
+      const dataResponse: userListResponse = await response.json()
   
-      const filteredResults = results.filter(result => result.name.first.includes(search)
-        || result.name.first.includes(search) || result.email.includes(search))
+      // const filteredResults = results.filter(result => result.name.first.includes(searchData)
+      //   || result.name.first.includes(searchData) || result.email.includes(searchData))
       
-      setCurrentPage(null)
-      return setUserList(filteredResults)
+      setSearch(searchData)
+      return setUserList(dataResponse)
     } 
     
-    const response = await fetch(`https://randomuser.me/api/?page=1&results=10&seed=colab`)
+    const response = await fetch(`http://localhost:3000/api/user/`)
 
-    const { results }: { results: UserDataResponse[] } = await response.json()
+    const dataResponse: userListResponse = await response.json()
 
-    setUserList(results)
-    setCurrentPage(1)
+    setUserList(dataResponse)
   }
 
   return (
@@ -71,7 +80,7 @@ export default function Home({ results }: { results: UserDataResponse[] }) {
         </form>
 
         <ul className="flex flex-col rounded-2xl bg-neutral-400 p-7 gap-3" ref={animationParent}>
-          {userList.map((user, index) => (
+          {userList.results.map((user, index) => (
             <ListCard
               key={user.login.uuid}
               userDetails={{
@@ -80,27 +89,12 @@ export default function Home({ results }: { results: UserDataResponse[] }) {
                 thumbnailUrl: user.picture.medium,
                 uuid: user.login.uuid
               }}
-              currentPage={currentPage}
+              // currentPage={currentPage}
             />
           ))}
         </ul>
 
-        <div className="flex gap-2 justify-end items-center">
-          <span className="text-brand-500 font-semibold">Páginas:</span>
-          <ul className="flex gap-2 px-2">
-            {pages.map(page => (
-              <li key={page} >
-                <button
-                  className="bg-brand-500 hover:bg-brand-400 disabled:cursor-not-allowed disabled:opacity-25 transition-all ease-in flex justify-center items-center w-8 h-8 text-neutral-200 font-bold rounded "
-                  onClick={() => handlePageChange(page)}
-                  disabled={currentPage === page}
-                >
-                  {page}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Pagination pagination={userList.pagination} pageChangeFn={handlePageChange}/>
       </section>
     </div>
   )

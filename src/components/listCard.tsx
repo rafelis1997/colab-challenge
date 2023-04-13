@@ -9,17 +9,15 @@ interface Props {
     thumbnailUrl: string
     uuid: string
   }
-  currentPage: number | null
 }
 
-export function ListCard({ userDetails, currentPage }: Props) {
+export function ListCard({ userDetails }: Props) {
   const router = useRouter()
   
   function handleUserDetails() {
     router.push({
       pathname: '/user-details',
       query: {
-        page: currentPage,
         uuid: userDetails.uuid
       }
     })
