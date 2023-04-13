@@ -15,15 +15,6 @@ interface userListResponse {
   }
 }
 
-const failedDataFetching = {
-  results: [],
-  pagination: {
-    currentPage: 1,
-    totalPages: 1,
-    hasNextPage: false
-  }
-}
-
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const response = await fetch('http://localhost:3000/api/user/')
@@ -36,10 +27,16 @@ export const getServerSideProps: GetServerSideProps = async () => {
       }
     }
   } catch (error) {
-    console.log(error)
     return {
       props: {
-        data: failedDataFetching
+        data: {
+          results: [],
+          pagination: {
+            currentPage: 1,
+            totalPages: 1,
+            hasNextPage: false
+          }
+        }
       }
     }
   }
@@ -59,7 +56,14 @@ export default function Home({data}: {data:userListResponse}) {
       setUserList(data)
     } catch (error) {
       toast('Erro ao carregar dados')
-      setUserList(failedDataFetching)
+      setUserList({
+        results: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 1,
+          hasNextPage: false
+        }
+      })
     }
   }
 
@@ -87,7 +91,14 @@ export default function Home({data}: {data:userListResponse}) {
       setSearch(null)
     } catch (error) {
       toast('Erro ao carregar dados')
-      setUserList(failedDataFetching)
+      setUserList({
+        results: [],
+        pagination: {
+          currentPage: 1,
+          totalPages: 1,
+          hasNextPage: false
+        }
+      })
       setSearch(null)
     }
   }

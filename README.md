@@ -1,38 +1,74 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Colab Code Challenge
 
-## Getting Started
+Este projeto tem como finalidade demonstrar conhecimentos práticos de Fullstack.
 
-First, run the development server:
+## Esclarecimentos
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-```
+A API mandatória a ser utilizada no desafio é a [Random User](https://randomuser.me/), porém para o
+design ao qual imaginei ela possui algumas limitações que atrapalharam o desenvolvimento,
+a paginação é uma delas pois é arbitraria e também não há query params para busca de usuários.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Por essa razão aproveitei os recursos do Next.js e criei uma rota de API local e implementei
+métodos de busca e paginação mais condizentes com a realidade, desta forma foi possível
+buscar usuários pelo nome de forma paginada e consistente, e também listar os usuários com
+paginação.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Funcionalidades
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+- Listar usuários vindos da API [Random User](https://randomuser.me/);
+- Pesquisar usuários pelo nome
+- Navegar para uma página de informações detalhadas de cada usuário
+- Responsividade
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Tecnologias utilizadas
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- Next.js 13
+- TailwindCSS
+- Toastify
+- Dayjs
+- axios
+- Phosphor Icons
 
-## Learn More
+## Desenvolvimento
 
-To learn more about Next.js, take a look at the following resources:
+Para realizar essa tarefa segui 5 principais etapas:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Wireframe
+- Identificação da marca e design da empresa
+- Design no Figma
+- Desenvolvimento da aplicação
+- Revisão de código e otimizações
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+O wireframe e design no Figma pode ser acessado aqui: [Colab challenge design](https://www.figma.com/file/0FFT2V44IAVFMx75kYxQAE/Colab-Interview?node-id=1-326&t=n4uvXRKR7tiBAOYu-0)
 
-## Deploy on Vercel
+Nesse Design busquei as cores e estilo de design no site principal da empresa, tentei seguir
+a mesma componentização e *feeling* da marca para ter consistência na aplicação.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Todo o design foi pensado com responsividade e tags semânticas para ajudar na acessibilidade,
+para screen reader's
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Após atingir um design consistente parti para o desenvolvimento, adotei o uso do Next.js
+como framework principal e TailwindCSS para estilização. Ambos são uma ótima combinação de produtividade
+e SEO, visto que o Next.js é SSR. Pude tirar vantagens dessa metodologia server side e criar uma API
+para melhor criação de recursos na aplicação.
+
+Apesar de simples e de ter apenas duas telas de navegação, busquei componentizar olhando para
+possíveis utilizações futuras de alguns componentes, como o de paginação por exemplo.
+
+## Disclaimer
+
+A API [Random User](https://randomuser.me/) tem limite de requests por um determinado periodo de tempo
+então é possível que a aplicação falhe caso haja muitas requisições, infelizmente essa limitação
+foge do meu controle e tentei lidar da melhor forma possível com *error handling* e feedback
+direto ao usuário.
+
+## Como Testar
+
+- Tenha o Node.js instalado na máquina
+- Clone o repositório em uma pasta de sua escolha
+- Navegue até a pasta onde o projeto foi clonado pelo terminal
+- Rode os comandos:
+`npm install && npm run dev`
+- O projeto deve iniciar no endereço:
+`http://localhost:3000`
+Acesse este endereço pelo navegador de sua preferência
