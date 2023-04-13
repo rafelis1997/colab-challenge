@@ -35,13 +35,13 @@ export default function UserDetails({ user }: { user: UserDataResponse }) {
           <h1 className="text-brand-title font-semibold text-xl leading-5 md:text-3xl">Detalhes do usuário</h1>
         </div>
 
-        <div className="flex flex-col md:flex-row md:gap-6">
+        <div className="flex flex-col w-full items-center justify-between md:items-stretch md:flex-row md:gap-6 ">
           <DetailsCard user={user}/>
 
           {/* Separator */}
           <div className="w-[2px] bg-neutral-700 hidden md:block" />
           
-          <div className="flex flex-col flex-1 py-4 gap-3">
+          <div className="flex flex-col flex-1 max-w-sm py-4 gap-3">
             <h3 className="flex gap-2 text-brand-title font-bold text-2xl">
               Informações adicionais
             </h3>
