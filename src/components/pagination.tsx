@@ -13,14 +13,21 @@ export function Pagination({ pageChangeFn, pagination }: Props) {
   const [displayedPagesButtons, setDisplayedPagesButtons] = useState<number[]>([])
 
   useEffect(() => {
-    console.log(pagination.hasNextPage)
     if (pagination.hasNextPage && pagination.currentPage === 1) { 
         let pagesArray: number[] = []
         for (let i = 1; i <= 3; i++) {
           if(i <= pagination.totalPages)  
             pagesArray = [...pagesArray, i]
+          
+          if (pagination.totalPages === 0) {
+            pagesArray = [1]
+          }
         }
         setDisplayedPagesButtons(pagesArray)    
+    }
+
+    if (!pagination.hasNextPage && pagination.currentPage === 1) {
+      setDisplayedPagesButtons([1])
     }
 
     if (pagination.hasNextPage && pagination.currentPage > 1) {
@@ -28,9 +35,13 @@ export function Pagination({ pageChangeFn, pagination }: Props) {
     }
 
     if (!pagination.hasNextPage && pagination.currentPage > 1) {
-       setDisplayedPagesButtons([pagination.currentPage - 2, pagination.currentPage - 1, pagination.currentPage ])
+        let pagesArray: number[] = []
+        for (let i = pagination.currentPage; i >= pagination.currentPage - 2; i--) { 
+          pagesArray = [i,...pagesArray]
+        }
+       setDisplayedPagesButtons(pagesArray)
     }
-  }, [pagination.currentPage, pagination.hasNextPage])
+  }, [pagination.currentPage, pagination.hasNextPage, pagination.totalPages])
 
   return (
     <div className="flex gap-2 justify-end items-center">

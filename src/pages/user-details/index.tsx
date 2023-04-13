@@ -1,10 +1,24 @@
+import dayjs from 'dayjs'
+import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { CaretLeft } from '@phosphor-icons/react'
-import dayjs from 'dayjs'
 
 import { UserDataResponse } from "@/dtos/UserDto";
 import { DetailsCard } from "@/components/detailsCard";
-import { useRouter } from "next/router";
+
+export const getServerSideProps: GetServerSideProps = async ({query}) => {
+  const { uuid } = query
+  
+  const response = await fetch(`https://randomuser.me/api/?results=1000&seed=colab`)
+  
+  const { results }: { results: UserDataResponse[] } = await response.json()
+
+  return {
+    props: {
+      user: results.find(user => user.login.uuid === uuid)
+    }
+  }
+}
 
 export default function UserDetails({ user }: { user: UserDataResponse }) {
   const router = useRouter()
@@ -70,18 +84,4 @@ export default function UserDetails({ user }: { user: UserDataResponse }) {
       </section>
     </div>
   )
-}
-
-export const getServerSideProps: GetServerSideProps = async ({query}) => {
-  const { uuid } = query
-  
-  const response = await fetch(`https://randomuser.me/api/?results=1000&seed=colab`)
-  
-  const { results }: { results: UserDataResponse[] } = await response.json()
-
-  return {
-    props: {
-      user: results.find(user => user.login.uuid === uuid)
-    }
-  }
 }

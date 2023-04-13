@@ -4,6 +4,7 @@ import { UserDataResponse } from "@/dtos/UserDto"
 import { GetServerSideProps } from "next"
 import { useAutoAnimate } from '@formkit/auto-animate/react'
 import { Pagination } from "@/components/pagination"
+import { toast } from "react-toastify"
 
 interface userListResponse {
   results: UserDataResponse[]
@@ -14,20 +15,35 @@ interface userListResponse {
   }
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+const failedDataFetching = {
+  results: [],
+  pagination: {
+    currentPage: 1,
+    totalPages: 1,
+    hasNextPage: false
+  }
+}
 
-  const response = await fetch('http://localhost:3000/api/user/')
-  
-  const data: userListResponse = await response.json()
-  
-  return {
-    props: {
-      data
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/api/user/')
+    
+    const dataResponse: userListResponse = await response.json()
+    
+    return {
+      props: {
+        data: dataResponse
+      }
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      props: {
+        data: failedDataFetching
+      }
     }
   }
 } 
-
-// const pages = [1, 2, 3]
 
 export default function Home({data}: {data:userListResponse}) {
   const [userList, setUserList] = useState<userListResponse>(data)
@@ -35,11 +51,16 @@ export default function Home({data}: {data:userListResponse}) {
   const [animationParent] = useAutoAnimate()
 
   async function handlePageChange(page: number) {
-    const response = await fetch(`http://localhost:3000/api/user/?search=${search ? search : '' }&page=${page}`)
-  
-    const data: userListResponse = await response.json()
+    try {  
+      const response = await fetch(`http://localhost:3000/api/user/?${search ? 'search='+ search : ''}&page=${page}`)
     
-    setUserList(data)
+      const data: userListResponse = await response.json()
+      
+      setUserList(data)
+    } catch (error) {
+      toast('Erro ao carregar dados')
+      setUserList(failedDataFetching)
+    }
   }
 
   async function handleSearch(e: FormEvent) {
@@ -48,23 +69,27 @@ export default function Home({data}: {data:userListResponse}) {
 
     const searchData = data.get('search') as string
 
-    if (searchData.length > 0) {
-      const response = await fetch(`http://localhost:3000/api/user/?search=${search}`)
-    
+    try {
+      if (searchData.length > 0) {
+        const response = await fetch(`http://localhost:3000/api/user/?page=1&search=${searchData.toLowerCase()}`)
+      
+        const dataResponse: userListResponse = await response.json()
+        
+        setSearch(searchData)
+        return setUserList(dataResponse)
+      } 
+      
+      const response = await fetch(`http://localhost:3000/api/user/`)
+  
       const dataResponse: userListResponse = await response.json()
   
-      // const filteredResults = results.filter(result => result.name.first.includes(searchData)
-      //   || result.name.first.includes(searchData) || result.email.includes(searchData))
-      
-      setSearch(searchData)
-      return setUserList(dataResponse)
-    } 
-    
-    const response = await fetch(`http://localhost:3000/api/user/`)
-
-    const dataResponse: userListResponse = await response.json()
-
-    setUserList(dataResponse)
+      setUserList(dataResponse)
+      setSearch(null)
+    } catch (error) {
+      toast('Erro ao carregar dados')
+      setUserList(failedDataFetching)
+      setSearch(null)
+    }
   }
 
   return (
@@ -80,7 +105,7 @@ export default function Home({data}: {data:userListResponse}) {
         </form>
 
         <ul className="flex flex-col rounded-2xl bg-neutral-400 p-7 gap-3" ref={animationParent}>
-          {userList.results.map((user, index) => (
+          {userList.results && userList.results.length > 0 ? userList.results.map((user, index) => (
             <ListCard
               key={user.login.uuid}
               userDetails={{
@@ -89,9 +114,10 @@ export default function Home({data}: {data:userListResponse}) {
                 thumbnailUrl: user.picture.medium,
                 uuid: user.login.uuid
               }}
-              // currentPage={currentPage}
             />
-          ))}
+          )) : (
+            <p>Nenhum usuário encontrado...</p>
+          )}
         </ul>
 
         <Pagination pagination={userList.pagination} pageChangeFn={handlePageChange}/>
