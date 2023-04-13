@@ -3,24 +3,31 @@ import { useEffect, useState } from "react"
 interface Props {
   pagination: {
     currentPage: number
+    totalPages: number
     hasNextPage: boolean
   }
   pageChangeFn: (page: number) => void
 }
 
 export function Pagination({ pageChangeFn, pagination }: Props) {
-  const [displayedPagesButtons, setDisplayedPagesButtons] = useState([1, 2, 3])
+  const [displayedPagesButtons, setDisplayedPagesButtons] = useState<number[]>([])
 
   useEffect(() => {
-    if (pagination.hasNextPage && pagination.currentPage <= 3) {
-      setDisplayedPagesButtons([pagination.currentPage + 1, pagination.currentPage + 2, pagination.currentPage + 3])
+    console.log(pagination.hasNextPage)
+    if (pagination.hasNextPage && pagination.currentPage === 1) { 
+        let pagesArray: number[] = []
+        for (let i = 1; i <= 3; i++) {
+          if(i <= pagination.totalPages)  
+            pagesArray = [...pagesArray, i]
+        }
+        setDisplayedPagesButtons(pagesArray)    
     }
 
-    if (pagination.hasNextPage && pagination.currentPage > 3) {
+    if (pagination.hasNextPage && pagination.currentPage > 1) {
        setDisplayedPagesButtons([pagination.currentPage - 1, pagination.currentPage, pagination.currentPage + 1])
     }
 
-    if (!pagination.hasNextPage) {
+    if (!pagination.hasNextPage && pagination.currentPage > 1) {
        setDisplayedPagesButtons([pagination.currentPage - 2, pagination.currentPage - 1, pagination.currentPage ])
     }
   }, [pagination.currentPage, pagination.hasNextPage])

@@ -28,17 +28,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     totalPages = Math.ceil(userResults.length / itemsPerPage)
   }
 
-  const pagesArray = Object.keys(new Array(totalPages).fill(null)).map(Number)
 
-  if (pagesArray.includes(Number(page))) {
+  if ((Number(page)) <= totalPages && (Number(page)) >= 1) {
     const usersList = userResults.slice((Number(page) * itemsPerPage) - itemsPerPage, (Number(page) * itemsPerPage))
 
     const userResponse = {
       results: usersList,
       pagination: {
-        currentPage: Number(page) + 1,
-        pagesArray,
-        hasNextPage: Number(page) < pagesArray.length
+        currentPage: Number(page),
+        totalPages,
+        hasNextPage: Number(page) < totalPages
       }
     }
 
@@ -48,8 +47,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const userResponse = {
       results: userResults.slice(0, 10),
       pagination: {
-        currentPage: Number(page) + 1,
-        hasNextPage: true
+        totalPages,
+        currentPage: 1,
+        hasNextPage: 1 < totalPages
       }
   }
 

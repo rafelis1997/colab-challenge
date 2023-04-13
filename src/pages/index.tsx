@@ -9,7 +9,7 @@ interface userListResponse {
   results: UserDataResponse[]
   pagination: {
     currentPage: number
-    pagesArray: number[]
+    totalPages: number
     hasNextPage: boolean
   }
 }
